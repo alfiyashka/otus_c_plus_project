@@ -44,14 +44,14 @@ bool NoSqlDB::execInsert(const NoSqlDB::SessionHandler &sessionHandle,
     return session->insert(insertData);
 }
 
-std::vector<std::shared_ptr<BasicDBObject>> NoSqlDB::select(const NoSqlDB::SessionHandler &sessionHandle,
+BasicDBObject::dataList_t NoSqlDB::select(const NoSqlDB::SessionHandler &sessionHandle,
                                  std::shared_ptr<IBasicDBWhereObject> whereData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
         std::cerr << "Cannot Select data. Auth error" << std::endl;
-        return std::vector<std::shared_ptr<BasicDBObject>>();
+        return BasicDBObject::dataList_t();
     }
     auto session = sessionRes.value();
     return session->select(whereData);

@@ -7,13 +7,13 @@ int TransactionManager::add(std::shared_ptr<Transaction> tr)
     return tr->xid();
 }
 
-void TransactionManager::commit(const int xid)
+void TransactionManager::commit(const std::size_t xid)
 {
     std::unique_lock<std::mutex> lock(m_mutex);
     m_transMap.erase(xid);
 }
 
-auto TransactionManager::getTransaction(int xid)
+auto TransactionManager::getTransaction(const std::size_t xid) const 
 {
     const auto &sessionIter = m_transMap.find(xid);
     if (sessionIter != m_transMap.end())

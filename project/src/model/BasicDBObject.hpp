@@ -19,6 +19,10 @@ protected:
 
 
 public:
+    using dataStore_t = std::unordered_map<int, std::shared_ptr<BasicDBObject>>;
+    using dataList_t = std::vector<std::shared_ptr<BasicDBObject>>;
+
+
     BasicDBObject(const Datatype type,
      const std::string& name,
      std::shared_ptr<void> data)
@@ -37,7 +41,7 @@ public:
     {
       return id() < obj.id();
     }
-    
+
     BasicDBObject &operator=(const BasicDBObject &obj) = delete;
     BasicDBObject(BasicDBObject&& obj) = delete;
     BasicDBObject &operator=(BasicDBObject && obj) = delete;
@@ -46,7 +50,6 @@ public:
 
     std::size_t id() const { return m_id; }
 
-    using dataStore_t = std::unordered_map<int, std::shared_ptr<BasicDBObject>>;
 
     void updateName(const std::string& newName)
     {

@@ -13,29 +13,29 @@ void DBStore::insert(const tempDbStoreType &tempDataStore)
         const JOB_TYPE jobType = tempData.second.first;
         switch (jobType)
         {
-        case JOB_TYPE::INSERT:
-        {
-            for (const auto insert : tempData.second.second)
+            case JOB_TYPE::INSERT:
             {
-                m_dataStore.insert(BasicDBObject::dataStore_t::value_type(insert->id(), insert));
+                for (const auto insert : tempData.second.second)
+                {
+                    m_dataStore.insert(BasicDBObject::dataStore_t::value_type(insert->id(), insert));
+                }
             }
-        }
-        case JOB_TYPE::UPDATE:
-        {
-            // delete + insert
-            for (const auto update : tempData.second.second)
+            case JOB_TYPE::UPDATE:
             {
-                m_dataStore.erase(update->id());
-                m_dataStore.insert(BasicDBObject::dataStore_t::value_type(update->id(), update));
+                // delete + insert
+                for (const auto update : tempData.second.second)
+                {
+                    m_dataStore.erase(update->id());
+                    m_dataStore.insert(BasicDBObject::dataStore_t::value_type(update->id(), update));
+                }
             }
-        }
-        case JOB_TYPE::DELETE:
-        {
-            for (const auto deleteItem : tempData.second.second)
+            case JOB_TYPE::DELETE:
             {
-                m_dataStore.erase(deleteItem->id());
+                for (const auto deleteItem : tempData.second.second)
+                {
+                    m_dataStore.erase(deleteItem->id());
+                }
             }
-        }
         }
     }
 }

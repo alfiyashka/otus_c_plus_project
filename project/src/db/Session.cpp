@@ -93,9 +93,9 @@ bool Session::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
     return true;
 }
 
-std::vector<std::shared_ptr<BasicDBObject>> Session::select(std::shared_ptr<IBasicDBWhereObject> whereData)
+BasicDBObject::dataList_t Session::select(std::shared_ptr<IBasicDBWhereObject> whereData)
 {
-    std::vector<std::shared_ptr<BasicDBObject>> data;
+    BasicDBObject::dataList_t data;
     if (m_tran.has_value())
     {
         auto tr = m_tran.value();

@@ -61,7 +61,7 @@ public:
 
     bool deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData);
 
-    std::vector<std::shared_ptr<BasicDBObject>> select(std::shared_ptr<IBasicDBWhereObject> whereData);
+    BasicDBObject::dataList_t select(std::shared_ptr<IBasicDBWhereObject> whereData);
 
     void commit();
 

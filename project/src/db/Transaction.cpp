@@ -107,7 +107,7 @@ bool Transaction::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
     }
 }
 
-std::vector<std::shared_ptr<BasicDBObject>> Transaction::select(std::shared_ptr<IBasicDBWhereObject> whereData)
+BasicDBObject::dataList_t Transaction::select(std::shared_ptr<IBasicDBWhereObject> whereData)
 {
     while (m_isOpen && !m_failed)
     {
@@ -122,7 +122,7 @@ std::vector<std::shared_ptr<BasicDBObject>> Transaction::select(std::shared_ptr<
     selectJob->run();
     m_lastProcessedSequence = selectJob->sequence();
     const auto resFromJob = selectJob->getResult();
-    std::vector<std::shared_ptr<BasicDBObject>> res{resFromJob.begin(), resFromJob.end()};
+    BasicDBObject::dataList_t res { resFromJob.begin(), resFromJob.end() };
 
     return res;
 }

@@ -41,7 +41,7 @@ public:
     bool execInsert(const SessionHandler& sessionHandle,
         std::shared_ptr<IBasicDBRedoObject> insertData);
 
-    std::vector<std::shared_ptr<BasicDBObject>> select(const SessionHandler& sessionHandle, 
+    BasicDBObject::dataList_t select(const SessionHandler& sessionHandle, 
         std::shared_ptr<IBasicDBWhereObject> whereData);
 
     bool execUpdate(const SessionHandler& sessionHandle,

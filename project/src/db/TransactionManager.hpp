@@ -16,17 +16,14 @@ public:
 
     int add(std::shared_ptr<Transaction> tr);
 
-    void commit(const int xid);
+    void commit(const std::size_t xid);
 
-    auto getTransaction(int xid);
-
-
+    auto getTransaction(const std::size_t xid) const;
 
 private:
     transactions_t m_transMap;
     std::size_t m_xidGenerator;
     std::mutex m_mutex;
-
 };
 
 
