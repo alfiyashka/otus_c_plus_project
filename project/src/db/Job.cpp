@@ -1,43 +1,43 @@
 #include "Job.hpp"
 
-bool Job::whereClouseCompareTo(std::shared_ptr<IBasicDBInputObject> whereData, std::shared_ptr<BasicDBObject> value) const
+bool Job::whereClouseCompareTo(std::shared_ptr<IBasicDBWhereObject> whereData, std::shared_ptr<BasicDBObject> value) const
 {
-    if (!whereData->nameUndo().empty() && !whereData->dataUndo().get() && whereData->typeUndo() == Datatype::UNDEFINED)
+    if (!whereData->nameWhere().empty() && !whereData->dataWhere().get() && whereData->typeWhere() == Datatype::UNDEFINED)
     {
         // find by name
-        if (whereData->nameUndo() == value->nameRedo())
+        if (whereData->nameWhere() == value->nameRedo())
         {
             return true;
         }
     }
-    if (!whereData->nameUndo().empty() && !whereData->dataUndo().get() && whereData->typeUndo() != Datatype::UNDEFINED)
+    if (!whereData->nameWhere().empty() && !whereData->dataWhere().get() && whereData->typeWhere() != Datatype::UNDEFINED)
     {
         // find by name and type
-        if (whereData->nameUndo() == value->nameRedo() && whereData->typeUndo() == value->typeRedo())
+        if (whereData->nameWhere() == value->nameRedo() && whereData->typeWhere() == value->typeRedo())
         {
             return true;
         }
     }
-    else if (whereData->nameUndo().empty() && !whereData->dataUndo().get() && whereData->typeUndo() != Datatype::UNDEFINED)
+    else if (whereData->nameWhere().empty() && !whereData->dataWhere().get() && whereData->typeWhere() != Datatype::UNDEFINED)
     {
         // find by only type
-        if (whereData->typeUndo() == value->typeRedo())
+        if (whereData->typeWhere() == value->typeRedo())
         {
             return true;
         }
     }
-    else if (whereData->nameUndo().empty() && whereData->dataUndo().get() && whereData->typeUndo() != Datatype::UNDEFINED)
+    else if (whereData->nameWhere().empty() && whereData->dataWhere().get() && whereData->typeWhere() != Datatype::UNDEFINED)
     {
         // find by data
-        if (whereData->typeUndo() == value->typeRedo() && DataComparator::compare(std::tuple(whereData->typeUndo(), whereData->dataUndo()),
+        if (whereData->typeWhere() == value->typeRedo() && DataComparator::compare(std::tuple(whereData->typeWhere(), whereData->dataWhere()),
                                                                                   std::tuple(value->typeRedo(), value->dataRedo())))
         {
             return true;
         }
     }
-    else if (!whereData->nameUndo().empty() && whereData->dataUndo().get() && whereData->typeUndo() != Datatype::UNDEFINED)
+    else if (!whereData->nameWhere().empty() && whereData->dataWhere().get() && whereData->typeWhere() != Datatype::UNDEFINED)
     {
-        if (whereData->nameUndo() == value->nameRedo() && whereData->typeUndo() == value->typeRedo() && DataComparator::compare(std::tuple(whereData->typeUndo(), whereData->dataUndo()), std::tuple(value->typeRedo(), value->dataRedo())))
+        if (whereData->nameWhere() == value->nameRedo() && whereData->typeWhere() == value->typeRedo() && DataComparator::compare(std::tuple(whereData->typeWhere(), whereData->dataWhere()), std::tuple(value->typeRedo(), value->dataRedo())))
         {
             return true;
         }
@@ -75,10 +75,10 @@ bool DeleteJob::compareToDelete(std::shared_ptr<BasicDBObject> value) const
 void DeleteJob::run()
 {
     std::shared_ptr<BasicDBObject> data;
-    if (m_deleteData->typeRedo() == Datatype::COMPOSITE)
+    if (m_deleteData->typeWhere() == Datatype::COMPOSITE)
     {
         data = std::shared_ptr<BasicDBObject>(new ComplexDBObject(
-            m_deleteData->nameRedo(), m_deleteData->dataRedo()));
+            m_deleteData->nameWhere(), m_deleteData->dataWhere()));
     }
     else
     {
@@ -154,7 +154,7 @@ void UpdateJob::run()
                               m_dataStore.select().begin(), m_dataStore.select().end(), findRes,
                               [this](BasicDBObject::dataStore_t &findRes, BasicDBObject::dataStore_t::value_type value)
                               {
-                                  if (whereClouseCompareTo(m_updateData, value.second))
+                                  if (whereClouseCompareTo(std::dynamic_pointer_cast<IBasicDBWhereObject>(m_updateData), value.second))
                                   {
                                       findRes.insert(value);
                                   }
@@ -171,7 +171,7 @@ void UpdateJob::run()
                                       {
                                           for (auto data : value.second.second)
                                           {
-                                              if (whereClouseCompareTo(m_updateData, data))
+                                              if (whereClouseCompareTo(std::dynamic_pointer_cast<IBasicDBWhereObject>(m_updateData), data))
                                               {
                                                   tempFindRes.push_back(data);
                                               }
@@ -259,17 +259,17 @@ void SelectJob::run()
 {
     if (!m_whereData.get()
         || m_whereData.get()
-            && !m_whereData.get()->dataUndo().get()
-            && m_whereData->typeUndo() == Datatype::UNDEFINED
-            && m_whereData->nameUndo().empty()) // select all if where clause is empty
+            && !m_whereData.get()->dataWhere().get()
+            && m_whereData->typeWhere() == Datatype::UNDEFINED
+            && m_whereData->nameWhere().empty()) // select all if where clause is empty
     {
         return selectAll();
     }
     std::shared_ptr<BasicDBObject> data;
-    if (m_whereData->typeRedo() == Datatype::COMPOSITE)
+    if (m_whereData->typeWhere() == Datatype::COMPOSITE)
     {
         data = std::shared_ptr<BasicDBObject>(new ComplexDBObject(
-            m_whereData->nameRedo(), m_whereData->dataRedo()));
+            m_whereData->nameWhere(), m_whereData->dataWhere()));
     }
     else
     {

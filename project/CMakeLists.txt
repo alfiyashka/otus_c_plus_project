@@ -12,7 +12,6 @@ set ( PROJECT_INCLUDE
    src/db/IdGenerator.hpp
    src/db/AuthInfo.hpp
    src/db/AuthManager.hpp
-   src/db/ConcurrentQueue.hpp
    src/db/DataComparator.hpp
    
    src/db/Job.hpp

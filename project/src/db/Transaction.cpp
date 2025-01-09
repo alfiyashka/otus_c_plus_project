@@ -48,7 +48,7 @@ void Transaction::commit()
     m_condVar.notify_one();
 }
 
-bool Transaction::insert(std::shared_ptr<IBasicDBInputObject> insertData)
+bool Transaction::insert(std::shared_ptr<IBasicDBRedoObject> insertData)
 {
     std::cout << "Inserting data by xid '" << m_xid << "'\n";
     if (!insertData.get())
@@ -68,7 +68,7 @@ bool Transaction::insert(std::shared_ptr<IBasicDBInputObject> insertData)
     return true;
 }
 
-bool Transaction::update(std::shared_ptr<IBasicDBInputObject> updateData)
+bool Transaction::update(std::shared_ptr<IBasicDBRedoUndoObject> updateData)
 {
     std::cout << "Updating data by xid '" << m_xid << "'\n";
     if (!updateData.get())
@@ -88,7 +88,7 @@ bool Transaction::update(std::shared_ptr<IBasicDBInputObject> updateData)
     return true;
 }
 
-bool Transaction::deleteExec(std::shared_ptr<IBasicDBInputObject> deleteData)
+bool Transaction::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
 {
     std::cout << "Deleting data by xid '" << m_xid << "'\n";
     if (!deleteData.get())
@@ -107,7 +107,7 @@ bool Transaction::deleteExec(std::shared_ptr<IBasicDBInputObject> deleteData)
     }
 }
 
-std::vector<std::shared_ptr<BasicDBObject>> Transaction::select(std::shared_ptr<IBasicDBInputObject> whereData)
+std::vector<std::shared_ptr<BasicDBObject>> Transaction::select(std::shared_ptr<IBasicDBWhereObject> whereData)
 {
     while (m_isOpen && !m_failed)
     {

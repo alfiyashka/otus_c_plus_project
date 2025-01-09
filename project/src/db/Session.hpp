@@ -55,13 +55,13 @@ public:
 
     void closeSession();
 
-    bool insert(std::shared_ptr<IBasicDBInputObject> insertData);
+    bool insert(std::shared_ptr<IBasicDBRedoObject> insertData);
 
-    bool update(std::shared_ptr<IBasicDBInputObject> updateData);
+    bool update(std::shared_ptr<IBasicDBRedoUndoObject> updateData);
 
-    bool deleteExec(std::shared_ptr<IBasicDBInputObject> deleteData);
+    bool deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData);
 
-    std::vector<std::shared_ptr<BasicDBObject>> select(std::shared_ptr<IBasicDBInputObject> whereData);
+    std::vector<std::shared_ptr<BasicDBObject>> select(std::shared_ptr<IBasicDBWhereObject> whereData);
 
     void commit();
 

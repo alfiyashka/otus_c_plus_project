@@ -42,7 +42,7 @@ void Session::closeSession()
     m_tran.reset();
 }
 
-bool Session::insert(std::shared_ptr<IBasicDBInputObject> insertData)
+bool Session::insert(std::shared_ptr<IBasicDBRedoObject> insertData)
 {
     if (m_tran.has_value())
     {
@@ -59,7 +59,7 @@ bool Session::insert(std::shared_ptr<IBasicDBInputObject> insertData)
     return true;
 }
 
-bool Session::update(std::shared_ptr<IBasicDBInputObject> updateData)
+bool Session::update(std::shared_ptr<IBasicDBRedoUndoObject> updateData)
 {
     if (m_tran.has_value())
     {
@@ -76,7 +76,7 @@ bool Session::update(std::shared_ptr<IBasicDBInputObject> updateData)
     return true;
 }
 
-bool Session::deleteExec(std::shared_ptr<IBasicDBInputObject> deleteData)
+bool Session::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
 {
     if (m_tran.has_value())
     {
@@ -93,7 +93,7 @@ bool Session::deleteExec(std::shared_ptr<IBasicDBInputObject> deleteData)
     return true;
 }
 
-std::vector<std::shared_ptr<BasicDBObject>> Session::select(std::shared_ptr<IBasicDBInputObject> whereData)
+std::vector<std::shared_ptr<BasicDBObject>> Session::select(std::shared_ptr<IBasicDBWhereObject> whereData)
 {
     std::vector<std::shared_ptr<BasicDBObject>> data;
     if (m_tran.has_value())

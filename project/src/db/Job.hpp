@@ -55,7 +55,7 @@ private:
 class Job
 {
 protected:
-    bool whereClouseCompareTo(std::shared_ptr<IBasicDBInputObject> whereData, std::shared_ptr<BasicDBObject> value) const;
+    bool whereClouseCompareTo(std::shared_ptr<IBasicDBWhereObject> whereData, std::shared_ptr<BasicDBObject> value) const;
     const JOB_TYPE m_type;
     const int m_sequence;
 public:
@@ -72,7 +72,7 @@ class InsertJob : public Job
 public:
     InsertJob(const int sequence,
               tempDbStoreType &tempDataStore,
-              std::shared_ptr<IBasicDBInputObject> insertData)
+              std::shared_ptr<IBasicDBRedoObject> insertData)
         : Job(JOB_TYPE::INSERT, sequence),
          m_tempDataStore(tempDataStore), m_insertData(insertData)
     {
@@ -83,7 +83,7 @@ public:
 
 private:
     tempDbStoreType &m_tempDataStore;
-    std::shared_ptr<IBasicDBInputObject> m_insertData;
+    std::shared_ptr<IBasicDBRedoObject> m_insertData;
 };
 
 class DeleteJob : public Job
@@ -92,7 +92,7 @@ public:
     DeleteJob(const int sequence,
               tempDbStoreType &tempDataStore,
               const DBStore &dataStore,
-              std::shared_ptr<IBasicDBInputObject> whereData)
+              std::shared_ptr<IBasicDBUndoObject> whereData)
         : Job(JOB_TYPE::DELETE, sequence), m_tempDataStore(tempDataStore), m_dataStore(dataStore), m_deleteData(whereData)
     {
     }
@@ -104,7 +104,7 @@ public:
 private:
     const DBStore &m_dataStore;
     tempDbStoreType &m_tempDataStore;
-    std::shared_ptr<IBasicDBInputObject> m_deleteData;
+    std::shared_ptr<IBasicDBUndoObject> m_deleteData;
 };
 
 class UpdateJob : public Job
@@ -113,7 +113,7 @@ public:
     UpdateJob(const int sequence,
               tempDbStoreType &tempDataStore,
               const DBStore &dataStore,
-              std::shared_ptr<IBasicDBInputObject> updateData)
+              std::shared_ptr<IBasicDBRedoUndoObject> updateData)
         : Job(JOB_TYPE::UPDATE, sequence), m_tempDataStore(tempDataStore), m_dataStore(dataStore), m_updateData(updateData)
     {
     }
@@ -123,7 +123,7 @@ public:
 private:
     const DBStore &m_dataStore;
     tempDbStoreType &m_tempDataStore;
-    std::shared_ptr<IBasicDBInputObject> m_updateData;
+    std::shared_ptr<IBasicDBRedoUndoObject> m_updateData;
 };
 
 class CommitJob : public Job
@@ -161,7 +161,7 @@ public:
     SelectJob(const int sequence,
               tempDbStoreType &tempDataStore,
               const DBStore &dataStore,
-              std::shared_ptr<IBasicDBInputObject> whereData)
+              std::shared_ptr<IBasicDBWhereObject> whereData)
         : Job(JOB_TYPE::SELECT, sequence), m_tempDataStore(tempDataStore), m_dataStore(dataStore), m_whereData(whereData)
     {
     }
@@ -175,7 +175,7 @@ private:
  
     const DBStore &m_dataStore;
     tempDbStoreType &m_tempDataStore;
-    std::shared_ptr<IBasicDBInputObject> m_whereData;
+    std::shared_ptr<IBasicDBWhereObject> m_whereData;
     SelectResult m_selectRes;
 };
 

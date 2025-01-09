@@ -31,7 +31,7 @@ bool NoSqlDB::beginTransaction(const NoSqlDB::SessionHandler &sessionHandle)
 }
 
 bool NoSqlDB::execInsert(const NoSqlDB::SessionHandler &sessionHandle,
-                         std::shared_ptr<IBasicDBInputObject> insertData)
+                         std::shared_ptr<IBasicDBRedoObject> insertData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
@@ -45,7 +45,7 @@ bool NoSqlDB::execInsert(const NoSqlDB::SessionHandler &sessionHandle,
 }
 
 std::vector<std::shared_ptr<BasicDBObject>> NoSqlDB::select(const NoSqlDB::SessionHandler &sessionHandle,
-                                 std::shared_ptr<IBasicDBInputObject> whereData)
+                                 std::shared_ptr<IBasicDBWhereObject> whereData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
@@ -58,7 +58,7 @@ std::vector<std::shared_ptr<BasicDBObject>> NoSqlDB::select(const NoSqlDB::Sessi
 }
 
 bool NoSqlDB::execUpdate(const NoSqlDB::SessionHandler &sessionHandle,
-                         std::shared_ptr<IBasicDBInputObject> updateData)
+                         std::shared_ptr<IBasicDBRedoUndoObject> updateData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
@@ -72,19 +72,17 @@ bool NoSqlDB::execUpdate(const NoSqlDB::SessionHandler &sessionHandle,
 }
 
 bool NoSqlDB::execDelete(const NoSqlDB::SessionHandler &sessionHandle,
-                         std::shared_ptr<IBasicDBInputObject> deleteData)
+                         std::shared_ptr<IBasicDBUndoObject> deleteData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
         std::cerr << "Cannot Update data. Auth error" << std::endl;
-        ;
         return false;
     }
     auto session = sessionRes.value();
     return session->deleteExec(deleteData);
 }
-// db.select();
 
 void NoSqlDB::commitTransaction(const NoSqlDB::SessionHandler &sessionHandle)
 {
