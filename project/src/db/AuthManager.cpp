@@ -17,7 +17,7 @@ bool AuthManager::registerUser(const std::string &username, const std::string &p
     return true;
 }
 
-std::optional<std::shared_ptr<Auth>> AuthManager::login(const std::string &username, const std::string &pwd) const
+std::optional<std::shared_ptr<IAuth>> AuthManager::login(const std::string &username, const std::string &pwd) const
 {
     if (username.empty())
     {

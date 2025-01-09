@@ -24,7 +24,7 @@ public:
 
     }
 
-    int createSession(std::shared_ptr<Auth> auth, DBStore& dataStore);
+    int createSession(std::shared_ptr<IAuth> auth, DBStore& dataStore);
 
     void closeSession(const std::size_t sessionId);
 

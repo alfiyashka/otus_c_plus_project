@@ -3,11 +3,20 @@
 
 #include <string>
 
-
-class Auth
+class IAuth
 {
-    const std::string m_username;
-    const std::string m_password;
+public:
+  virtual const std::string& username() const = 0;
+  virtual ~IAuth() {}
+};
+
+/**
+ * Store authorization manager 
+ */
+class Auth: public IAuth
+{
+    const std::string m_username; // user name
+    const std::string m_password; // user password
 public:
     Auth( const std::string& username, const std::string& password)
     : m_username(username),
@@ -16,7 +25,7 @@ public:
 
     }
 
-    const std::string& username() const { return m_username; }
+    const std::string& username() const override { return m_username; }
     const std::string& password() const { return m_password; }
     
 };

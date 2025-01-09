@@ -2,10 +2,10 @@
 #define _ID_GENERATOR_HPP_
 
 #include <mutex>
-#include <future>
 #include <atomic>
-
-
+/**
+ * Singleton. Helps to auto generate unique id for each data 
+ */
 class IDGenerator
 {    
 public:
@@ -26,6 +26,9 @@ private:
     static std::mutex m_mutex;
 };
 
+/**
+ * Singleton. Helps to auto generate unique id for each transaction 
+ */
 class XIDGenerator
 {
 public:
