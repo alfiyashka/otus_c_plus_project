@@ -42,7 +42,7 @@ void Session::closeSession()
     m_tran.reset();
 }
 
-bool Session::insert(std::shared_ptr<IBasicDBRedoObject> insertData)
+bool Session::insert(InsertJob::insertData_t insertData)
 {
     if (m_tran.has_value())
     {
@@ -59,7 +59,7 @@ bool Session::insert(std::shared_ptr<IBasicDBRedoObject> insertData)
     return true;
 }
 
-bool Session::update(std::shared_ptr<IBasicDBRedoUndoObject> updateData)
+bool Session::update(UpdateJob::updateData_t updateData)
 {
     if (m_tran.has_value())
     {
@@ -76,7 +76,7 @@ bool Session::update(std::shared_ptr<IBasicDBRedoUndoObject> updateData)
     return true;
 }
 
-bool Session::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
+bool Session::deleteExec(DeleteJob::whereData_t deleteData)
 {
     if (m_tran.has_value())
     {
@@ -93,7 +93,7 @@ bool Session::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
     return true;
 }
 
-BasicDBObject::dataList_t Session::select(std::shared_ptr<IBasicDBWhereObject> whereData)
+BasicDBObject::dataList_t Session::select(SelectJob::whereData_t whereData)
 {
     BasicDBObject::dataList_t data;
     if (m_tran.has_value())

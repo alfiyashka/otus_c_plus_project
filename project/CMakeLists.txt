@@ -52,6 +52,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inlude)
 add_executable(nosql ${PROJECT_INCLUDE} ${PROJECT_SOURCES} 
    main.cpp)
 
+add_library(nosqllib STATIC ${PROJECT_INCLUDE} ${PROJECT_SOURCES})
+
 target_link_libraries (nosql 
    Threads::Threads
 )
@@ -61,7 +63,7 @@ set_property(TARGET  PROPERTY CXX_STANDARD 23)
 install(TARGETS nosql DESTINATION . )
 
 enable_testing()
-add_subdirectory(test)
+add_subdirectory(tests)
 
 include("functions.cmake")
 generate_packages(${PROJECT_NAME})

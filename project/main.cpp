@@ -22,17 +22,17 @@ int main(int argc, const char *argv[])
   }
 
   db.beginTransaction(loginRes);
-  std::shared_ptr<std::string> data(new std::string("data"));
-  std::shared_ptr<IBasicDBRedoObject> insertdata(new BasicDBInsertObject(Datatype::STRING, "data_name", data));
+  Data_t data(new std::string("data"));
+  InsertJob::insertData_t insertdata(new BasicDBInsertObject(Datatype::STRING, "data_name", data));
   db.execInsert(loginRes, insertdata);
   db.select(loginRes, nullptr);
-  std::shared_ptr<std::string> dataNew(new std::string("dataUpdated"));
-  std::shared_ptr<IBasicDBRedoUndoObject> updatedata(new BasicDBUpdateObject(Datatype::STRING, "data_name",
+  Data_t dataNew(new std::string("dataUpdated"));
+  UpdateJob::updateData_t updatedata(new BasicDBUpdateObject(Datatype::STRING, "data_name",
     dataNew, Datatype::STRING, "data_name", data));
   db.execUpdate(loginRes, updatedata);
 
 
-  std::shared_ptr<IBasicDBUndoObject> deletedata(new BasicDBDeleteObject(Datatype::STRING, "data_name", dataNew, false));
+  DeleteJob::whereData_t deletedata(new BasicDBDeleteObject(Datatype::STRING, "data_name", dataNew, false));
   db.execDelete(loginRes, deletedata);
   db.select(loginRes, nullptr);
   db.commitTransaction(loginRes);

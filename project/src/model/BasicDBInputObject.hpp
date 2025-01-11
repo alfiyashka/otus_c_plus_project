@@ -10,43 +10,48 @@
 
 class BasicDBAbstractObject
 {
-protected:
-    std::shared_ptr<void> m_data;
-    // metadata
-    Datatype m_type;
-    std::string m_name;
-
-    BasicDBAbstractObject* m_parent;
 public:
+    using parent_t = std::shared_ptr<BasicDBAbstractObject>;
     BasicDBAbstractObject(const Datatype type,
      const std::string& name,
-     std::shared_ptr<void> data)
+     Data_t data)
     : m_type(type),
       m_name(name),
-      m_data(data)
+      m_data(data),
+      m_parent(nullptr)
     {
 
     }
 
     BasicDBAbstractObject(const Datatype type,
-     std::shared_ptr<void> data)
+     Data_t data)
     : m_type(type),
       m_name(""),
-      m_data(data)
+      m_data(data),
+      m_parent(nullptr)
     {
     }
 
     BasicDBAbstractObject(const BasicDBAbstractObject& obj)
     : m_type(obj.m_type),
       m_name(obj.m_name),
-      m_data(obj.m_data)
+      m_data(obj.m_data),
+      m_parent(nullptr)
     {
 
     }
 
     BasicDBAbstractObject &operator=(const BasicDBAbstractObject &obj) = delete;
     BasicDBAbstractObject(BasicDBAbstractObject&& obj) = delete;
-    BasicDBAbstractObject &operator=(BasicDBAbstractObject && obj) = delete;  
+    BasicDBAbstractObject &operator=(BasicDBAbstractObject&& obj) = delete;
+
+protected:
+    Data_t m_data;
+    // metadata
+    Datatype m_type;
+    std::string m_name;
+
+    parent_t m_parent;  
 };
 
 class IBasicDBWhereObject
@@ -54,21 +59,26 @@ class IBasicDBWhereObject
 public:
     virtual ~IBasicDBWhereObject() {}
 
-    virtual BasicDBAbstractObject* parentWhere() const = 0;
+    virtual BasicDBAbstractObject::parent_t parentWhere() const = 0;
     virtual Datatype typeWhere() const = 0;
     virtual std::string nameWhere() const = 0;
-    virtual std::shared_ptr<void> dataWhere() const = 0;
+    virtual Data_t dataWhere() const = 0;
 };
 
-class IBasicDBRedoObject
+class IBasicDBRedoObject: public IBasicDBWhereObject
 {
 public:
     virtual ~IBasicDBRedoObject() {}
 
-    virtual BasicDBAbstractObject* parentRedo() const = 0;
+    virtual BasicDBAbstractObject::parent_t parentRedo() const = 0;
     virtual Datatype typeRedo() const = 0;
     virtual std::string nameRedo() const = 0;
-    virtual std::shared_ptr<void> dataRedo() const = 0;
+    virtual Data_t dataRedo() const = 0;
+
+    BasicDBAbstractObject::parent_t parentWhere() const override { return parentRedo(); }
+    Datatype typeWhere() const override { return typeRedo(); }
+    std::string nameWhere() const override { return nameRedo(); }
+    Data_t dataWhere() const override { return dataRedo(); }
 };
 
 
@@ -78,32 +88,32 @@ class IBasicDBUndoObject: public IBasicDBWhereObject
 public:
     virtual ~IBasicDBUndoObject() {}
 
-    virtual BasicDBAbstractObject* parentUndo() const = 0;
+    virtual BasicDBAbstractObject::parent_t parentUndo() const = 0;
     virtual Datatype typeUndo() const = 0;
     virtual std::string nameUndo() const = 0;
-    virtual std::shared_ptr<void> dataUndo() const = 0;
+    virtual Data_t dataUndo() const = 0;
 
-    BasicDBAbstractObject* parentWhere() const override { return parentUndo(); }
+    BasicDBAbstractObject::parent_t parentWhere() const override { return parentUndo(); }
     Datatype typeWhere() const override { return typeUndo(); }
     std::string nameWhere() const override { return nameUndo(); }
-    std::shared_ptr<void> dataWhere() const override { return dataUndo(); }
+    Data_t dataWhere() const override { return dataUndo(); }
 };
 
 
-class IBasicDBRedoUndoObject: public IBasicDBRedoObject, public IBasicDBWhereObject
+class IBasicDBRedoUndoObject: public IBasicDBRedoObject
 {
 public:
     virtual ~IBasicDBRedoUndoObject() {}
 
-    virtual BasicDBAbstractObject* parentUndo() const { return nullptr; };
+    virtual BasicDBAbstractObject::parent_t parentUndo() const { return nullptr; };
     virtual Datatype typeUndo() const { return Datatype::UNDEFINED; };
     virtual std::string nameUndo() const { return ""; };
-    virtual std::shared_ptr<void> dataUndo() const { return std::shared_ptr<void>(nullptr); }
+    virtual Data_t dataUndo() const { return Data_t(nullptr); }
 
-    BasicDBAbstractObject* parentWhere() const override { return parentUndo(); }
+    BasicDBAbstractObject::parent_t parentWhere() const override { return parentUndo(); }
     Datatype typeWhere() const override { return typeUndo(); }
     std::string nameWhere() const override { return nameUndo(); }
-    std::shared_ptr<void> dataWhere() const override { return dataUndo(); } 
+    Data_t dataWhere() const override { return dataUndo(); } 
 };
 
 
@@ -113,14 +123,14 @@ class BasicDBInsertObject: public BasicDBAbstractObject, public IBasicDBRedoObje
 public:
     BasicDBInsertObject(const Datatype type,
      const std::string& name,
-     std::shared_ptr<void> data)
+     Data_t data)
     : BasicDBAbstractObject(type, name, data)
     {
 
     }
 
     BasicDBInsertObject(const Datatype type,
-     std::shared_ptr<void> data): BasicDBAbstractObject(type, data)
+     Data_t data): BasicDBAbstractObject(type, data)
     {
     }
 
@@ -134,33 +144,65 @@ public:
     BasicDBInsertObject(BasicDBInsertObject&& obj) = delete;
     BasicDBInsertObject &operator=(BasicDBInsertObject && obj) = delete;
 
-    BasicDBAbstractObject* parentRedo() const { return m_parent; }
-    void parentRedo(BasicDBInsertObject* parent) { m_parent = parent; }
+    BasicDBAbstractObject::parent_t parentRedo() const { return m_parent; }
+    void parentRedo(BasicDBInsertObject::parent_t parent) { m_parent = parent; }
 
 
     Datatype typeRedo() const override { return m_type; }
     std::string nameRedo() const override { return m_name; }
 
-    std::shared_ptr<void> dataRedo() const override { return m_data; }    
+    Data_t dataRedo() const override { return m_data; }    
+};
+
+class BasicDBSelectObject : public BasicDBInsertObject
+{
+public:
+    BasicDBSelectObject(const Datatype type,
+     const std::string& name,
+     Data_t data)
+    : BasicDBInsertObject(type, name, data)
+    {
+
+    }
+
+    BasicDBSelectObject(const Datatype type,
+     Data_t data): BasicDBInsertObject(type, data)
+    {
+    }
+
+    BasicDBSelectObject(const std::string& name)
+     : BasicDBInsertObject(Datatype::UNDEFINED, name, Data_t(nullptr))
+    {
+    }    
+
+    BasicDBSelectObject(const BasicDBSelectObject& obj)
+    : BasicDBInsertObject(obj)
+    {
+
+    }
+
+    BasicDBSelectObject &operator=(const BasicDBSelectObject &obj) = delete;
+    BasicDBSelectObject(BasicDBSelectObject&& obj) = delete;
+    BasicDBSelectObject &operator=(BasicDBSelectObject && obj) = delete;
 };
 
 
 class BasicDBUpdateObject: public BasicDBAbstractObject, public IBasicDBRedoUndoObject
 {    
 protected:
-    std::shared_ptr<void> m_dataUndo;
+    Data_t m_dataUndo;
     // metadata
     const Datatype m_typeUndo;
     const std::string m_nameUndo;
     
-    BasicDBAbstractObject* m_parentUndo;
+    BasicDBAbstractObject::parent_t m_parentUndo;
 public:
     BasicDBUpdateObject(const Datatype type,
      const std::string& name,
-     std::shared_ptr<void> data,
+     Data_t data,
      const Datatype typeUndo,
      const std::string& nameUndo,
-     std::shared_ptr<void> dataUndo)
+     Data_t dataUndo)
     : BasicDBAbstractObject(type, name, data),
       m_dataUndo(dataUndo),
       m_nameUndo(nameUndo),
@@ -182,24 +224,26 @@ public:
     BasicDBUpdateObject(BasicDBUpdateObject&& obj) = delete;
     BasicDBUpdateObject &operator=(BasicDBUpdateObject && obj) = delete;
 
-    BasicDBAbstractObject* parentUndo() const override { return m_parentUndo; }
-    void parentUndo(BasicDBAbstractObject* parent) { m_parentUndo = parent; }
+    BasicDBAbstractObject::parent_t parentUndo() const override { return m_parentUndo; }
+    void parentUndo(BasicDBAbstractObject::parent_t parent) { m_parentUndo = parent; }
 
 
     Datatype typeUndo() const override { return m_typeUndo; }
     std::string nameUndo() const override { return m_nameUndo; }
 
-    std::shared_ptr<void> dataUndo() const override { return m_dataUndo; }
+    Data_t dataUndo() const override { return m_dataUndo; }
 
     Datatype typeRedo() const override { return m_type; }
     std::string nameRedo() const override { return m_name; }
 
-    std::shared_ptr<void> dataRedo() const override { return m_data; }  
+    Data_t dataRedo() const override { return m_data; }  
 
-    BasicDBAbstractObject* parentRedo() const override { return m_parent; }
-    void parentRedo(BasicDBAbstractObject* parent) { m_parent = parent; } 
+    BasicDBAbstractObject::parent_t parentRedo() const override { return m_parent; }
+    void parentRedo(BasicDBAbstractObject::parent_t parent) { m_parent = parent; } 
     
 };
+
+
 
 
 class BasicDBDeleteObject:  public BasicDBAbstractObject, public IBasicDBUndoObject
@@ -208,7 +252,7 @@ class BasicDBDeleteObject:  public BasicDBAbstractObject, public IBasicDBUndoObj
 public:
     BasicDBDeleteObject(const Datatype type,
      const std::string& name,
-     std::shared_ptr<void> data,
+     Data_t data,
      const bool cascade)
     : BasicDBAbstractObject(type, name, data), 
       m_cascade(cascade)
@@ -217,7 +261,23 @@ public:
     }
 
     BasicDBDeleteObject(const Datatype type,
-     std::shared_ptr<void> data,
+     const std::string& name,
+     Data_t data)
+    : BasicDBAbstractObject(type, name, data), 
+      m_cascade(false)
+    {
+
+    }
+
+    BasicDBDeleteObject(const std::string& name)
+    : BasicDBAbstractObject(Datatype::UNDEFINED, name, Data_t(nullptr)), 
+      m_cascade(false)
+    {
+
+    }
+
+    BasicDBDeleteObject(const Datatype type,
+     Data_t data,
      const bool cascade = false)
     : BasicDBAbstractObject(type, data),
       m_cascade(cascade)
@@ -238,9 +298,9 @@ public:
     Datatype typeUndo() const override { return m_type; }
     std::string nameUndo() const override { return m_name; }
 
-    std::shared_ptr<void> dataUndo() const override { return m_data; }
+    Data_t dataUndo() const override { return m_data; }
 
-    BasicDBAbstractObject* parentUndo() const override { return m_parent; }
+    BasicDBAbstractObject::parent_t parentUndo() const override { return m_parent; }
 
 };
 

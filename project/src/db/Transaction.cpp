@@ -48,7 +48,7 @@ void Transaction::commit()
     m_condVar.notify_one();
 }
 
-bool Transaction::insert(std::shared_ptr<IBasicDBRedoObject> insertData)
+bool Transaction::insert(InsertJob::insertData_t insertData)
 {
     std::cout << "Inserting data by xid '" << m_xid << "'\n";
     if (!insertData.get())
@@ -68,7 +68,7 @@ bool Transaction::insert(std::shared_ptr<IBasicDBRedoObject> insertData)
     return true;
 }
 
-bool Transaction::update(std::shared_ptr<IBasicDBRedoUndoObject> updateData)
+bool Transaction::update(UpdateJob::updateData_t updateData)
 {
     std::cout << "Updating data by xid '" << m_xid << "'\n";
     if (!updateData.get())
@@ -88,7 +88,7 @@ bool Transaction::update(std::shared_ptr<IBasicDBRedoUndoObject> updateData)
     return true;
 }
 
-bool Transaction::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
+bool Transaction::deleteExec(DeleteJob::whereData_t deleteData)
 {
     std::cout << "Deleting data by xid '" << m_xid << "'\n";
     if (!deleteData.get())
@@ -107,7 +107,7 @@ bool Transaction::deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData)
     }
 }
 
-BasicDBObject::dataList_t Transaction::select(std::shared_ptr<IBasicDBWhereObject> whereData)
+BasicDBObject::dataList_t Transaction::select(SelectJob::whereData_t whereData)
 {
     while (m_isOpen && !m_failed)
     {

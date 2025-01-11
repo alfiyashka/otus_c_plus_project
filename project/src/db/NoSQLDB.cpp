@@ -31,7 +31,7 @@ bool NoSqlDB::beginTransaction(const NoSqlDB::SessionHandler &sessionHandle)
 }
 
 bool NoSqlDB::execInsert(const NoSqlDB::SessionHandler &sessionHandle,
-                         std::shared_ptr<IBasicDBRedoObject> insertData)
+                         InsertJob::insertData_t insertData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
@@ -45,7 +45,7 @@ bool NoSqlDB::execInsert(const NoSqlDB::SessionHandler &sessionHandle,
 }
 
 BasicDBObject::dataList_t NoSqlDB::select(const NoSqlDB::SessionHandler &sessionHandle,
-                                 std::shared_ptr<IBasicDBWhereObject> whereData)
+                                 SelectJob::whereData_t whereData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
@@ -58,7 +58,7 @@ BasicDBObject::dataList_t NoSqlDB::select(const NoSqlDB::SessionHandler &session
 }
 
 bool NoSqlDB::execUpdate(const NoSqlDB::SessionHandler &sessionHandle,
-                         std::shared_ptr<IBasicDBRedoUndoObject> updateData)
+                         UpdateJob::updateData_t updateData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
@@ -72,7 +72,7 @@ bool NoSqlDB::execUpdate(const NoSqlDB::SessionHandler &sessionHandle,
 }
 
 bool NoSqlDB::execDelete(const NoSqlDB::SessionHandler &sessionHandle,
-                         std::shared_ptr<IBasicDBUndoObject> deleteData)
+                         DeleteJob::whereData_t deleteData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())

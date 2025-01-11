@@ -46,13 +46,13 @@ public:
 
     void commit();
 
-    bool insert(std::shared_ptr<IBasicDBRedoObject> insertData);
+    bool insert(InsertJob::insertData_t insertData);
 
-    bool update(std::shared_ptr<IBasicDBRedoUndoObject> updateData);
+    bool update(UpdateJob::updateData_t updateData);
 
-    bool deleteExec(std::shared_ptr<IBasicDBUndoObject> deleteData);
+    bool deleteExec(DeleteJob::whereData_t deleteData);
 
-    BasicDBObject::dataList_t select(std::shared_ptr<IBasicDBWhereObject> whereData);
+    BasicDBObject::dataList_t select(SelectJob::whereData_t whereData);
 
     void rollback();
 

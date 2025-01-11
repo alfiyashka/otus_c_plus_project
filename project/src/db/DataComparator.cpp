@@ -1,18 +1,26 @@
 #include "DataComparator.hpp"
 
-bool DataComparator::compare(const std::tuple<Datatype, std::shared_ptr<void>> &r,
-                             const std::tuple<Datatype, std::shared_ptr<void>> &l)
+bool DataComparator::isPlainDataEqual(const DataWithType &r, const DataWithType &l)
 {
     if (std::get<0>(r) != std::get<0>(l))
     {
         return false;
+    }
+    if (std::get<1>(r).get() == nullptr && std::get<1>(l).get() != nullptr
+        || std::get<1>(r).get() != nullptr && std::get<1>(l).get() == nullptr)
+    {
+        return false;
+    }
+    if (std::get<1>(r).get() == nullptr && std::get<1>(l).get() == nullptr)
+    {
+        return true;
     }
     const Datatype type = std::get<0>(r);
     switch (type)
     {
     case Datatype::BIGINT:
         return (*(static_cast<uint64_t *>(std::get<1>(r).get()))) == (*(static_cast<uint64_t *>(std::get<1>(l).get())));
-    case Datatype::BIT:
+    case Datatype::BYTE:
         return (*(static_cast<uint8_t *>(std::get<1>(r).get()))) == (*(static_cast<uint8_t *>(std::get<1>(l).get())));
     case Datatype::DOUBLE:
         return (*(static_cast<double *>(std::get<1>(r).get()))) == (*(static_cast<double *>(std::get<1>(l).get())));

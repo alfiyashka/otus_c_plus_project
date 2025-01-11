@@ -33,13 +33,20 @@ public:
      */
     std::optional<std::shared_ptr<IAuth>> login(const std::string& username, const std::string& pwd) const;
 
-    
+    /**
+     * removes by username login data
+     * @param username - username
+     */
     void removeUser(const std::string& username);
 
+private:
+    /**
+     * gets user login data by username
+     * @param username - username
+     * @return login data
+     */
     auto getUser(const std::string& username) const;
 
-
-private:
     auths_t m_auths;
 
 };

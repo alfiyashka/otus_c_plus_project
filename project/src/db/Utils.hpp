@@ -16,6 +16,6 @@ enum class JOB_TYPE
     COMMIT
 };
 
-using tempDbStoreType = std::map<std::size_t, std::pair<JOB_TYPE, std::list<std::shared_ptr<BasicDBObject>>>>;
+using tempDbStoreType = std::map<std::size_t, std::pair<JOB_TYPE, std::list<BasicDBObject::pointer_t>>>;
 
 #endif

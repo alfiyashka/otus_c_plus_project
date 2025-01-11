@@ -39,16 +39,16 @@ public:
     bool beginTransaction(const SessionHandler& sessionHandle);
 
     bool execInsert(const SessionHandler& sessionHandle,
-        std::shared_ptr<IBasicDBRedoObject> insertData);
+        InsertJob::insertData_t insertData);
 
     BasicDBObject::dataList_t select(const SessionHandler& sessionHandle, 
-        std::shared_ptr<IBasicDBWhereObject> whereData);
+        SelectJob::whereData_t whereData);
 
     bool execUpdate(const SessionHandler& sessionHandle,
-        std::shared_ptr<IBasicDBRedoUndoObject> updateData);
+        UpdateJob::updateData_t updateData);
 
     bool execDelete(const SessionHandler& sessionHandle,
-        std::shared_ptr<IBasicDBUndoObject> deleteData);
+        DeleteJob::whereData_t deleteData);
 
     void commitTransaction(const SessionHandler& sessionHandle);
 
