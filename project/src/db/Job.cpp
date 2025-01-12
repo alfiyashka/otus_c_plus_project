@@ -58,10 +58,11 @@ bool Job::whereClauseCompareTo(std::shared_ptr<IBasicDBWhereObject> whereData, B
                     {
                         return false;
                     }
-                    BasicDBObject::pointer_t valueChild = findValueChild->second;
-                    std::shared_ptr<IBasicDBWhereObject> whereChild 
-                        = std::dynamic_pointer_cast<IBasicDBWhereObject>(child.second);
-                    return whereClauseCompareTo(whereChild, valueChild);
+                   // BasicDBObject::pointer_t valueChild = std::dynamic_pointer_cast<BasicDBObject>(findValueChild->second);
+                   // std::shared_ptr<IBasicDBWhereObject> whereChild 
+                   //     = std::dynamic_pointer_cast<IBasicDBWhereObject>(child.second);
+                   // return whereClauseCompareTo(whereChild, valueChild);
+                   return false;
                 }
 
             }
@@ -111,9 +112,8 @@ void InsertJob::run()
     BasicDBObject::pointer_t data;
     if (m_insertData->typeRedo() == Datatype::COMPOSITE)
     {
-        data = BasicDBObject::pointer_t(new ComplexDBObject(
-            m_insertData->nameRedo(), m_insertData->dataRedo()));
-        data->parent(m_insertData->parentRedo());        
+        data = BasicDBObject::pointer_t(new ComplexDBObject(m_insertData->nameRedo()));
+        data->setParent(m_insertData->parentRedo());        
     }
     else
     {
@@ -220,8 +220,7 @@ void UpdateJob::updateData(BasicDBObject::pointer_t data) const
                 ComplexDBObject::pointer_t composite = std::dynamic_pointer_cast<ComplexDBObject>(data);
                 ComplexDBObject* compositeUpdate = (reinterpret_cast<ComplexDBObject*>(m_updateData->dataRedo().get()));
                 
-                composite->updateData(compositeUpdate->dataRedo());
-                composite->updateChilds(compositeUpdate->getChildrens());
+                composite->updateChilds(compositeUpdate->childsRedo());
             }
             catch(const std::bad_alloc& e)
             {

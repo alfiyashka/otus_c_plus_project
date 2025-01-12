@@ -24,7 +24,7 @@ class NoSqlDB
 
 public:
 
-    NoSqlDB(): m_sessionManager(m_transactionManager)
+    NoSqlDB(): m_sessionManager(m_transactionManager, m_dataStore)
     {
         
     }

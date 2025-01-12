@@ -44,7 +44,10 @@ public:
     BasicDBObject(BasicDBObject&& obj) = delete;
     BasicDBObject &operator=(BasicDBObject && obj) = delete;
 
-    void parent(BasicDBObject::parent_t parent) { m_parent = parent; }
+    void setParent(BasicDBObject::parent_t parent)
+    { 
+      m_parent = parent;
+    }
 
     std::size_t id() const { return m_id; }
 
@@ -54,7 +57,7 @@ public:
       m_name = newName;
     }
 
-    void updateData(Data_t newData)
+    virtual void updateData(Data_t newData)
     {
       m_data = newData;
     }
@@ -63,7 +66,16 @@ public:
     {
       m_type = newType;
     }
-    
+private:
+   
+    // inaccessible forcely
+    Datatype typeWhere() const override { return typeRedo(); }
+    std::string nameWhere() const override { return nameRedo(); }
+    Data_t dataWhere() const override { return dataRedo(); }
+
+    BasicDBAbstractObject::childs_t childsRedo() const override { return BasicDBAbstractObject::childs_t(); };
+
+
 };
 
 #endif

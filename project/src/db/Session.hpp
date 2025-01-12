@@ -21,7 +21,7 @@ class Session
 {
     const std::shared_ptr<IAuth> m_auth;
     const std::size_t m_id;
-    std::optional<std::shared_ptr<Transaction>> m_tran;
+    std::optional<Transaction::pointer_t> m_tran;
     bool m_terminate;
     bool m_isOpen;
 
@@ -49,7 +49,7 @@ public:
     void createTransaction();
 
 
-    void addTransaction(std::shared_ptr<Transaction> tr);
+    void addTransaction(Transaction::pointer_t tr);
 
     void terminate();
 
@@ -64,6 +64,8 @@ public:
     BasicDBObject::dataList_t select(SelectJob::whereData_t whereData);
 
     void commit();
+
+    void rollback();
 
     std::size_t getId() const { return m_id; }
 };

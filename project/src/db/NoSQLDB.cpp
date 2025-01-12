@@ -12,7 +12,7 @@ NoSqlDB::SessionHandler NoSqlDB::login(const std::string &username, const std::s
     {
         return std::nullopt;
     }
-    const auto sessionId = m_sessionManager.createSession(loginInfo.value(), m_dataStore);
+    const auto sessionId = m_sessionManager.createSession(loginInfo.value());
     return SessionHandler(sessionId);
 }
 

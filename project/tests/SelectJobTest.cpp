@@ -246,7 +246,7 @@ TEST(db_select_job_test_case, select_one_by_type_composite_type)
     
     tempDbStoreType::value_type::second_type::second_type tempInsertRes;
     auto dataToStore = BasicDBObject::pointer_t(new BasicDBObject(Datatype::INT, "myInt", Data_t(new int(30))));
-    auto compositeData = ComplexDBObject::pointer_t(new ComplexDBObject("myComplex", Data_t(new std::string("data"))));
+    auto compositeData = ComplexDBObject::pointer_t(new ComplexDBObject("myComplex"));
     compositeData->addChild(dataToStore);
     
     BasicDBObject::pointer_t compositeDbObject = 

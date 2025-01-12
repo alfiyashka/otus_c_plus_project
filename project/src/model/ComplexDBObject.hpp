@@ -13,14 +13,13 @@ class ComplexDBObject : public BasicDBObject, public std::enable_shared_from_thi
 
 public:
     using pointer_t = std::shared_ptr<ComplexDBObject>;
-    ComplexDBObject(const std::string &name,
-                    Data_t data)
-         : BasicDBObject(Datatype::COMPOSITE, name, data)
+    ComplexDBObject(const std::string &name)
+         : BasicDBObject(Datatype::COMPOSITE, name, Data_t(nullptr))
     {
     }
 
     ComplexDBObject(const ComplexDBObject& obj)
-         : BasicDBObject(obj),
+         : BasicDBObject((const BasicDBObject)obj),
          m_childrens(obj.getChildrens())
     {
     }
@@ -28,54 +27,32 @@ public:
     ComplexDBObject &operator=(const ComplexDBObject &obj) = delete;
     ComplexDBObject(ComplexDBObject &&obj) = delete;
     ComplexDBObject &operator=(ComplexDBObject &&obj) = delete;
+    
+    void addChild(BasicDBObject::pointer_t child);
 
-    using childs_t = std::map<std::size_t, BasicDBObject::pointer_t>;
+    void removeChild(BasicDBObject::pointer_t child);
 
-    void addChild(BasicDBObject::pointer_t child)
-    {
-        m_childrens.insert(childs_t::value_type(child->id(), child));
-        child->parent(shared_from_this());
-    }
+    void removeChild(std::size_t id);
 
-    void removeChild(BasicDBObject::pointer_t child)
-    {
-        child->parent(BasicDBObject::pointer_t(nullptr));
-        m_childrens.erase(child->id());
-    }
+    BasicDBAbstractObject::pointer_t getChild(std::size_t id);
 
-    void removeChild(std::size_t id)
-    {
-        const auto find = m_childrens.find(id);
-        if (find == m_childrens.end())
-        {
-            return;
-        }
-        find->second->parent(BasicDBObject::pointer_t(nullptr));
-        m_childrens.erase(id);
-    }
+    BasicDBAbstractObject::childs_t childsRedo() const override { return getChildrens(); }
+    const BasicDBAbstractObject::childs_t &getChildrens() const;
 
-    BasicDBObject::pointer_t getChild(std::size_t id)
-    {
-        const auto found = m_childrens.find(id);
-        if (found != m_childrens.end())
-        {
-            return found->second;
-        }
-        return BasicDBObject::pointer_t(nullptr);
-    }
+    void updateChilds(const BasicDBAbstractObject::childs_t& childrens);
 
-    const childs_t &getChildrens() const
-    {
-        return m_childrens;
-    }
+    bool operator==(const ComplexDBObject &obj) const;
 
-    void updateChilds(const childs_t& childrens)
-    {
-        m_childrens = childrens;
-    }
 
 private:
-    childs_t m_childrens;
+    BasicDBAbstractObject::childs_t m_childrens;
+
+    Data_t dataWhere() const override { return dataRedo(); }
+    Data_t dataRedo() const override { return m_data; }
+
+    void updateData(Data_t newData) override { }
+
+
 };
 
 #endif

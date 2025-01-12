@@ -21,6 +21,12 @@ set(PROJECT_UNIT_TESTS
     SessionManagerTest.cpp
     TransactionTest.cpp
     TransactionManagerTest.cpp
+    BasicDBInsertObjectTest.cpp
+    BasicDBSelectObjectTest.cpp
+    BasicDBUpdateObjectTest.cpp
+    BasicDBDeleteObjectTest.cpp
+    BasicDBObjectTest.cpp
+    ComplexDBObjectTest.cpp
 )
 
 include_directories(../src/db/)

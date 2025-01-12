@@ -13,13 +13,13 @@ Session::~Session()
 
 void Session::createTransaction()
 {
-    std::shared_ptr<Transaction> tran(new Transaction(m_dataStore));
+    Transaction::pointer_t tran(new Transaction(m_dataStore));
     m_tran = tran;
     m_transactionManager.add(tran);
     m_tran.value()->begin();
 }
 
-void Session::addTransaction(std::shared_ptr<Transaction> tr)
+void Session::addTransaction(Transaction::pointer_t tr)
 {
     m_tran = tr;
     tr->begin();
@@ -117,6 +117,18 @@ void Session::commit()
     {
         auto tr = m_tran.value();
         tr->commit();
+        m_transactionManager.remove(tr->xid());
+        m_tran.reset();
+    }
+}
+
+void Session::rollback()
+{
+    if (m_tran.has_value())
+    {
+        auto tr = m_tran.value();
+        tr->rollback();
+        m_transactionManager.remove(tr->xid());
         m_tran.reset();
     }
 }

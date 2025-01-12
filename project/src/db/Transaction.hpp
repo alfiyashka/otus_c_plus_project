@@ -24,8 +24,8 @@
 
 class Transaction
 {
-public:   
-
+public:
+    using pointer_t = std::shared_ptr<Transaction>;
     Transaction(DBStore& dataStore)
     : m_xid(XIDGenerator::getGenerator()->generateId()),
       m_dataStore(dataStore),

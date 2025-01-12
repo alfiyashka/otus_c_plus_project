@@ -1,10 +1,10 @@
 #include "SessionManager.hpp"
 
-int SessionManager::createSession(std::shared_ptr<IAuth> auth, DBStore &dataStore)
+int SessionManager::createSession(std::shared_ptr<IAuth> auth)
 {
     const auto newId = generateId();
     m_sessions.insert(
-        sessions_t::value_type(newId, std::shared_ptr<Session>(new Session(newId, auth, m_transactionManager, dataStore))));
+        sessions_t::value_type(newId, std::shared_ptr<Session>(new Session(newId, auth, m_transactionManager, m_dataStore))));
     return newId;
 }
 

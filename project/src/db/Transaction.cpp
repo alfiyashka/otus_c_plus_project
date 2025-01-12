@@ -46,6 +46,10 @@ void Transaction::commit()
     std::shared_ptr<Job> commitJob(new CommitJob(m_jobSequence++, m_tempDataStore, m_dataStore, m_xid));
     m_jobs.push(commitJob);
     m_condVar.notify_one();
+    if (m_thread.joinable())
+    {
+        m_thread.join();
+    }
 }
 
 bool Transaction::insert(InsertJob::insertData_t insertData)
@@ -131,6 +135,10 @@ void Transaction::rollback()
 {
     m_tempDataStore.clear();
     std::cout << "Rollback data by xid '" << m_xid << "'\n";
+    if (m_thread.joinable())
+    {
+        m_thread.join();
+    }      
 }
 
 void Transaction::terminate()

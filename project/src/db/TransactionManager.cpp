@@ -1,28 +1,38 @@
 #include "TransactionManager.hpp"
+#include <iostream>
 
-int TransactionManager::add(std::shared_ptr<Transaction> tr)
+int TransactionManager::add(Transaction::pointer_t tr)
 {
     std::unique_lock<std::mutex> lock(m_mutex);
     m_transMap.insert(transactions_t::value_type(tr->xid(), tr));
     return tr->xid();
 }
 
-void TransactionManager::commit(const std::size_t xid)
+void TransactionManager::remove(const std::size_t xid)
 {
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_transMap.erase(xid);
+    auto tr = m_transMap.find(xid);
+    if (tr != m_transMap.end())
+    {
+        if (tr->second->isOpen())
+        {
+            std::cerr<<"Transaction with xid '" << xid << "' has been terminated \n";
+            tr->second->terminate();
+        }
+        m_transMap.erase(xid);
+    }    
 }
 
-auto TransactionManager::getTransaction(const std::size_t xid) const 
+Transaction::pointer_t TransactionManager::getTransaction(const std::size_t xid) const 
 {
-    const auto &sessionIter = m_transMap.find(xid);
-    if (sessionIter != m_transMap.end())
+    const auto &trIter = m_transMap.find(xid);
+    if (trIter != m_transMap.end())
     {
-        sessionIter->second;
+        return trIter->second;
     }
     else
     {
-        std::string error = "Internal Logic Error. This session " + std::to_string(xid);
+        std::string error = "Internal Logic Error. This transaction " + std::to_string(xid) + "does not exist";
         throw std::runtime_error(error.c_str());
     }
 }
