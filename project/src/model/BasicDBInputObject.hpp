@@ -96,6 +96,7 @@ public:
 class IBasicDBRedoObject: public IBasicDBWhereObject
 {
 public:
+    using pointer_t = std::shared_ptr<IBasicDBRedoObject>;
     virtual ~IBasicDBRedoObject() {}
 
     virtual BasicDBAbstractObject::parent_t parentRedo() const = 0;

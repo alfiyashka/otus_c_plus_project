@@ -1,16 +1,17 @@
 #include "AuthManager.hpp"
+#include "yelloger.h"
 
 bool AuthManager::registerUser(const std::string &username, const std::string &pwd)
 {
     if (username.empty())
     {
-        std::cerr << "Username is empty: cannot registrate" << std::endl;
+        Yellog::Error("Username is empty: cannot registrate");
         return false;
     }
     const auto &userIter = m_auths.find(username);
     if (userIter != m_auths.end())
     {
-        std::cerr << "The user with username " << username << " is exists. Cannot registrate" << std::endl;
+        Yellog::Error("The user with username '%s' is exists. Cannot registrate", username.c_str());
         return false;
     }
     m_auths.insert(auths_t::value_type(username, std::shared_ptr<Auth>(new Auth(username, pwd))));
@@ -21,13 +22,13 @@ std::optional<std::shared_ptr<IAuth>> AuthManager::login(const std::string &user
 {
     if (username.empty())
     {
-        std::cerr << "Username is empty: cannot login" << std::endl;
+        Yellog::Error("Username is empty: cannot login");
         return std::nullopt;
     }
     const auto &userIter = m_auths.find(username);
     if (userIter == m_auths.end() || userIter != m_auths.end() && userIter->second->password() != pwd)
     {
-        std::cerr << "Username or password is incorrect. Cannot login" << std::endl;
+        Yellog::Error("Username or password is incorrect. Cannot login");
         return std::nullopt;
     }
     return std::optional(userIter->second);

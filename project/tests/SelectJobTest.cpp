@@ -61,7 +61,7 @@ TEST(db_select_job_test_case, select_one_by_type)
     auto findSelected = std::find_if(selectRes.begin(), selectRes.end(),
       [](const SelectJob::selectData_t::value_type& data)
      {
-        return data->typeRedo() == Datatype::STRING;
+        return data->getType() == Datatype::STRING;
      });
 
     EXPECT_TRUE(findSelected != selectRes.end());
@@ -90,7 +90,7 @@ TEST(db_select_job_test_case, select_one_by_data)
     auto findSelected = std::find_if(selectRes.begin(), selectRes.end(),
       [&wheredata](const SelectJob::selectData_t::value_type& data)
      {
-        return DataComparator::isPlainDataEqual(DataWithType(data->typeRedo(), data->dataRedo()),
+        return DataComparator::isPlainDataEqual(DataWithType(data->getType(), data->getData()),
           DataWithType(wheredata->typeWhere(), wheredata->dataWhere()));
      });
 
@@ -132,9 +132,9 @@ TEST(db_select_job_test_case, select_one_by_data_and_name)
     auto findSelected = std::find_if(selectRes.begin(), selectRes.end(),
       [&wheredata](const SelectJob::selectData_t::value_type& data)
      {
-        return DataComparator::isPlainDataEqual(DataWithType(data->typeRedo(), data->dataRedo()),
+        return DataComparator::isPlainDataEqual(DataWithType(data->getType(), data->getData()),
           DataWithType(wheredata->typeWhere(), wheredata->dataWhere()))
-           && data->nameRedo() == wheredata->nameWhere();
+           && data->getName() == wheredata->nameWhere();
      });
 
 }
@@ -160,7 +160,7 @@ TEST(db_select_job_test_case, select_one_by_only_name)
     auto findSelected = std::find_if(selectRes.begin(), selectRes.end(),
       [&wheredata](const SelectJob::selectData_t::value_type& data)
      {
-        return data->nameRedo() == wheredata->nameWhere();
+        return data->getName() == wheredata->nameWhere();
      });
 
 }
@@ -228,10 +228,10 @@ TEST(db_select_job_test_case, select_complex)
 
     for (auto selectItem : selectRes)
     {
-        if (selectItem->id() == updatedDataToStore2->id())
+        if (selectItem->getId() == updatedDataToStore2->id())
         {
             // is updated ?
-            EXPECT_TRUE(DataComparator::isPlainDataEqual(DataWithType(selectItem->typeRedo(), selectItem->dataRedo()),
+            EXPECT_TRUE(DataComparator::isPlainDataEqual(DataWithType(selectItem->getType(), selectItem->getData()),
                 DataWithType(updatedDataToStore2->typeRedo(), updatedDataToStore2->dataRedo())));
             break;
         }
@@ -279,7 +279,7 @@ TEST(db_select_job_test_case, select_one_by_type_composite_type)
     auto findSelected = std::find_if(selectRes.begin(), selectRes.end(),
       [&wheredata](const SelectJob::selectData_t::value_type& data)
      {
-        return data->typeRedo() == Datatype::COMPOSITE;
+        return data->getType() == Datatype::COMPOSITE;
      });
 }
 

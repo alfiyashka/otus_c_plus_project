@@ -41,7 +41,7 @@ public:
     bool execInsert(const SessionHandler& sessionHandle,
         InsertJob::insertData_t insertData);
 
-    BasicDBObject::dataList_t select(const SessionHandler& sessionHandle, 
+    BasicDBObject::selectList_t select(const SessionHandler& sessionHandle, 
         SelectJob::whereData_t whereData);
 
     bool execUpdate(const SessionHandler& sessionHandle,

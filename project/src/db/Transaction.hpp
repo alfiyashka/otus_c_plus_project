@@ -21,7 +21,9 @@
 #include <vector>
 
 
-
+/**
+ * defines transaction class
+ */
 class Transaction
 {
 public:
@@ -38,10 +40,15 @@ public:
     }
 
     ~Transaction();
-
+    
+    /**
+     * performs transaction jobs sequentially
+     */
     void transactionWork();
 
-
+    /**
+     * open transaction
+     */
     void begin();
 
     void commit();
@@ -52,7 +59,7 @@ public:
 
     bool deleteExec(DeleteJob::whereData_t deleteData);
 
-    BasicDBObject::dataList_t select(SelectJob::whereData_t whereData);
+    BasicDBObject::selectList_t select(SelectJob::whereData_t whereData);
 
     void rollback();
 
@@ -70,12 +77,10 @@ private:
     tempDbStoreType m_tempDataStore;
 
     std::mutex m_mutex;
-    std::mutex m_selectmutex;
 
     std::queue<std::shared_ptr<Job>> m_jobs;
 
     std::condition_variable m_condVar;
-    std::condition_variable m_condVarSelect;
 
     bool m_failed;
 

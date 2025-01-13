@@ -1,4 +1,5 @@
 #include "Transaction.hpp"
+#include "yelloger.h"
 
 Transaction::~Transaction()
 {
@@ -38,7 +39,7 @@ void Transaction::transactionWork()
 
 void Transaction::begin()
 {
-    std::cout << "Begin transaction with id '" << m_xid << "'\n";
+    Yellog::Info("Begin transaction with id '%d'", m_xid);
 }
 
 void Transaction::commit()
@@ -54,12 +55,12 @@ void Transaction::commit()
 
 bool Transaction::insert(InsertJob::insertData_t insertData)
 {
-    std::cout << "Inserting data by xid '" << m_xid << "'\n";
+    Yellog::Info("Inserting data by xid '%d'", m_xid);
     if (!insertData.get())
     {
         m_failed = false;
         m_condVar.notify_one();
-        std::cout << "Insert failed \n";
+        Yellog::Error("Insert failed");
         return false;
     }
 
@@ -74,12 +75,12 @@ bool Transaction::insert(InsertJob::insertData_t insertData)
 
 bool Transaction::update(UpdateJob::updateData_t updateData)
 {
-    std::cout << "Updating data by xid '" << m_xid << "'\n";
+    Yellog::Info("Updating data by xid '%d'", m_xid);
     if (!updateData.get())
     {
         m_failed = false;
         m_condVar.notify_one();
-        std::cout << "Updating failed \n";
+        Yellog::Error("Updating failed");
         return false;
     }
 
@@ -94,12 +95,12 @@ bool Transaction::update(UpdateJob::updateData_t updateData)
 
 bool Transaction::deleteExec(DeleteJob::whereData_t deleteData)
 {
-    std::cout << "Deleting data by xid '" << m_xid << "'\n";
+    Yellog::Info("Deleting data by xid '%d'", m_xid);
     if (!deleteData.get())
     {
         m_failed = false;
         m_condVar.notify_one();
-        std::cout << "Delete failed \n";
+        Yellog::Error("Delete failed");
         return false;
     }
 
@@ -111,7 +112,7 @@ bool Transaction::deleteExec(DeleteJob::whereData_t deleteData)
     }
 }
 
-BasicDBObject::dataList_t Transaction::select(SelectJob::whereData_t whereData)
+BasicDBObject::selectList_t Transaction::select(SelectJob::whereData_t whereData)
 {
     while (m_isOpen && !m_failed)
     {
@@ -121,12 +122,12 @@ BasicDBObject::dataList_t Transaction::select(SelectJob::whereData_t whereData)
             break;
         }
     }
-    std::cout << "Selecting data by xid '" << m_xid << "'\n";
+    Yellog::Info("Selecting data by xid '%d'", m_xid);
     std::shared_ptr<SelectJob> selectJob(new SelectJob(m_jobSequence++, m_tempDataStore, m_dataStore, whereData));
     selectJob->run();
     m_lastProcessedSequence = selectJob->sequence();
     const auto resFromJob = selectJob->getResult();
-    BasicDBObject::dataList_t res { resFromJob.begin(), resFromJob.end() };
+    BasicDBObject::selectList_t res { resFromJob.begin(), resFromJob.end() };
 
     return res;
 }
@@ -134,7 +135,7 @@ BasicDBObject::dataList_t Transaction::select(SelectJob::whereData_t whereData)
 void Transaction::rollback()
 {
     m_tempDataStore.clear();
-    std::cout << "Rollback data by xid '" << m_xid << "'\n";
+    Yellog::Info("Rollback data by xid '%d'", m_xid);
     if (m_thread.joinable())
     {
         m_thread.join();
@@ -145,5 +146,5 @@ void Transaction::terminate()
 {
     this->m_failed = true;
     m_condVar.notify_one();
-    std::cout << "Terminate data by xid '" << m_xid << "'\n";
+    Yellog::Info("Terminate data by xid '%d'", m_xid);
 }

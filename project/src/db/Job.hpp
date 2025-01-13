@@ -7,7 +7,6 @@
 #include "DBStore.hpp"
 #include "DataComparator.hpp"
 #include <memory>
-#include <iostream>
 #include <mutex>
 #include <execution>
 #include <list>
@@ -176,7 +175,16 @@ class SelectJob : public Job
 {
 public:
     using whereData_t = std::shared_ptr<IBasicDBWhereObject>;
-    using selectData_t = std::set<BasicDBObject::pointer_t, CompareData>;
+    struct CompareData
+    {
+        bool operator()(const IBasicDBSelectObject::pointer_t r,
+            const IBasicDBSelectObject::pointer_t l) const
+        {
+            return *r.get() < *l.get();
+        }
+    };
+
+    using selectData_t = std::set<IBasicDBSelectObject::pointer_t, CompareData>;
     SelectJob(const int sequence,
               tempDbStoreType &tempDataStore,
               const DBStore &dataStore,

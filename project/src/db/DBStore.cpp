@@ -1,5 +1,6 @@
 #include "DBStore.hpp"
 #include <iostream>
+#include "yelloger.h"
 
 bool DBStore::insert(const tempDbStoreType &tempDataStore)
 {
@@ -20,8 +21,7 @@ bool DBStore::insert(const tempDbStoreType &tempDataStore)
                 {
                     if (dublicateExists(insert->id()))
                     {
-                        std::cerr<<"Cannot insert data with id '" << insert->id()
-                             << "'. Because the data with same id exists" << std::endl;
+                        Yellog::Error("Cannot insert data with id '%d'. Because the data with same id exists", insert->id());
                         return false;
                     }
                     m_dataStore.insert(BasicDBObject::dataStore_t::value_type(insert->id(), insert));

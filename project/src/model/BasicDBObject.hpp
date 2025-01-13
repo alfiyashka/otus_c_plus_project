@@ -10,7 +10,29 @@
 #include "../db/IdGenerator.hpp"
 #include "BasicDBInputObject.hpp"
 
-class BasicDBObject: public BasicDBInsertObject
+
+class IBasicDBSelectObject
+{
+public:
+    using pointer_t = std::shared_ptr<IBasicDBSelectObject>;
+    using selectList_t = std::vector<IBasicDBSelectObject::pointer_t>;
+    virtual ~IBasicDBSelectObject() {}
+
+    virtual Datatype getType() const = 0;
+    virtual std::string getName() const = 0;
+    virtual Data_t getData() const = 0;
+    virtual std::size_t getId() const = 0;
+    virtual BasicDBAbstractObject::childs_t getChilds() const { return BasicDBAbstractObject::childs_t(); }
+    virtual BasicDBAbstractObject::parent_t getParent() const = 0;
+
+    bool operator<(const IBasicDBSelectObject &obj) const
+    {
+      return getId() < obj.getId();
+    }
+    
+};
+
+class BasicDBObject: public BasicDBInsertObject, public IBasicDBSelectObject
 {
 protected:
     // metadata
@@ -66,6 +88,14 @@ public:
     {
       m_type = newType;
     }
+
+
+    Datatype getType() const override { return type();}
+    std::string getName() const override { return name();}
+    Data_t getData() const override { return data();}
+    std::size_t getId() const override { return id();}
+    BasicDBAbstractObject::parent_t getParent() const override { return parent();}
+
 private:
    
     // inaccessible forcely

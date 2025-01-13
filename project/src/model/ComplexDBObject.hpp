@@ -37,6 +37,8 @@ public:
     BasicDBAbstractObject::pointer_t getChild(std::size_t id);
 
     BasicDBAbstractObject::childs_t childsRedo() const override { return getChildrens(); }
+    BasicDBAbstractObject::childs_t getChilds() const { return getChildrens(); }
+    
     const BasicDBAbstractObject::childs_t &getChildrens() const;
 
     void updateChilds(const BasicDBAbstractObject::childs_t& childrens);

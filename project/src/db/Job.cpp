@@ -1,4 +1,5 @@
 #include "Job.hpp"
+#include "yelloger.h"
 
 bool Job::whereClauseCompareTo(std::shared_ptr<IBasicDBWhereObject> whereData, BasicDBObject::pointer_t value) const
 {
@@ -58,11 +59,10 @@ bool Job::whereClauseCompareTo(std::shared_ptr<IBasicDBWhereObject> whereData, B
                     {
                         return false;
                     }
-                   // BasicDBObject::pointer_t valueChild = std::dynamic_pointer_cast<BasicDBObject>(findValueChild->second);
-                   // std::shared_ptr<IBasicDBWhereObject> whereChild 
-                   //     = std::dynamic_pointer_cast<IBasicDBWhereObject>(child.second);
-                   // return whereClauseCompareTo(whereChild, valueChild);
-                   return false;
+                    BasicDBObject::pointer_t valueChild = std::dynamic_pointer_cast<BasicDBObject>(findValueChild->second);
+                    std::shared_ptr<IBasicDBWhereObject> whereChild 
+                        = std::dynamic_pointer_cast<IBasicDBWhereObject>(child.second);
+                    return whereClauseCompareTo(whereChild, valueChild);
                 }
 
             }
@@ -126,7 +126,7 @@ void InsertJob::run()
         tempDbStoreType::value_type(m_sequence,
                                     std::pair(m_type, tempFindRes)));
 
-    std::cout << "Inserted data \n";
+    Yellog::Info("Inserted data");
 }
 
 bool DeleteJob::compareToDelete(BasicDBObject::pointer_t value) const
@@ -138,7 +138,7 @@ void DeleteJob::run()
 {
     if (m_dataStore.empty() && m_tempDataStore.empty())
     {
-        std::cout << "No data to delete. Database is empty" << std::endl;
+        Yellog::Info("No data to delete. Database is empty");
         return;
     }
 
@@ -196,8 +196,7 @@ void DeleteJob::run()
         m_tempDataStore.insert(
             tempDbStoreType::value_type(m_sequence, std::pair(m_type, tempFindRes)));
     }
-
-    std::cout << "Deleted data :" << tempFindRes.size() << " records" << std::endl;
+    Yellog::Info("Deleted data : %d records", tempFindRes.size());
 }
 
 void UpdateJob::updateData(BasicDBObject::pointer_t data) const
@@ -212,7 +211,7 @@ void UpdateJob::updateData(BasicDBObject::pointer_t data) const
         {
             if (data->typeRedo() != Datatype::COMPOSITE)
             {
-                std::cerr << "Cannot convert plain data to composite data. Id is '" << data->id() << "' \n";
+                Yellog::Error("Cannot convert plain data to composite data. Id is '%d", data->id());
                 return;
             }
             try
@@ -224,7 +223,7 @@ void UpdateJob::updateData(BasicDBObject::pointer_t data) const
             }
             catch(const std::bad_alloc& e)
             {
-                std::cerr << "Cannot update composite data. Incorrect input redo. Id is '" << data->id() << "' \n";
+                Yellog::Error("Cannot update composite data. Incorrect input redo. Id is '%d", data->id());
             }
         }
         else
@@ -243,7 +242,7 @@ void UpdateJob::run()
 {
     if (m_dataStore.empty() && m_tempDataStore.empty())
     {
-        std::cout << "No data to update. Database is empty" << std::endl;
+        Yellog::Info("No data to update. Database is empty");
         return;
     }
 
@@ -320,15 +319,14 @@ void UpdateJob::run()
             tempDbStoreType::value_type(m_sequence,
                                         std::pair(m_type, tempFindRes)));
     }
-
-    std::cout << "Updated data :" << tempFindRes.size() << " records" << std::endl;
+    Yellog::Info("Updated data : %d records", tempFindRes.size());
 }
 
 void CommitJob::run()
 {
     m_dataStore.insert(m_tempDataStore);
     m_tempDataStore.clear();
-    std::cout << "End transaction with id '" << m_xid << "'\n";
+    Yellog::Info("End transaction with id '%d'", m_xid);
 }
 
 void SelectJob::selectAll()
@@ -349,7 +347,7 @@ void SelectJob::selectAll()
         {
             if (deletedIds.find(data->id()) == deletedIds.end())
             {
-                m_selectRes.insert(data);
+                m_selectRes.insert(std::dynamic_pointer_cast<IBasicDBSelectObject>(data));
             }            
         }
     }
@@ -360,7 +358,7 @@ void SelectJob::selectAll()
     {
         m_selectRes.insert(storedDataIter->second);
     }
-    std::cout << "Selected data :" << m_selectRes.size() << " records" << std::endl;
+    Yellog::Info("Selected data : %d records", m_selectRes.size());
 }
 
 void SelectJob::run()
@@ -376,7 +374,7 @@ void SelectJob::run()
     BasicDBObject::pointer_t data;
     if (m_dataStore.empty() && m_tempDataStore.empty())
     {
-        std::cout << "No data to select. Database is empty" << std::endl;
+        Yellog::Info("No data to select. Database is empty");
         return;
     }
 
@@ -442,6 +440,5 @@ void SelectJob::run()
     {
         m_selectRes.insert(data.second);
     }
-
-    std::cout << "Selected data :" << m_selectRes.size() << " records" << std::endl;
+    Yellog::Info("Selected data : %d records", m_selectRes.size());
 }

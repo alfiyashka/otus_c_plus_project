@@ -1,4 +1,5 @@
 #include "SessionManager.hpp"
+#include "yelloger.h"
 
 int SessionManager::createSession(std::shared_ptr<IAuth> auth)
 {
@@ -22,7 +23,7 @@ std::optional<std::shared_ptr<Session>> SessionManager::getSession(std::size_t s
     }
     else
     {
-        std::cerr << "Internal Logic Error. This session " << sessionId << std::endl;
+        Yellog::Error("Internal Logic Error. This session '%d'", sessionId);
         return std::nullopt;
     }
 }

@@ -1,5 +1,5 @@
 #include "TransactionManager.hpp"
-#include <iostream>
+#include "yelloger.h"
 
 int TransactionManager::add(Transaction::pointer_t tr)
 {
@@ -16,7 +16,7 @@ void TransactionManager::remove(const std::size_t xid)
     {
         if (tr->second->isOpen())
         {
-            std::cerr<<"Transaction with xid '" << xid << "' has been terminated \n";
+            Yellog::Error("Transaction with xid '%s' has been terminated", xid);
             tr->second->terminate();
         }
         m_transMap.erase(xid);

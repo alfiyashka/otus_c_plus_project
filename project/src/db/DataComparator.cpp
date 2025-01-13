@@ -1,4 +1,5 @@
 #include "DataComparator.hpp"
+#include "yelloger.h"
 
 bool DataComparator::isPlainDataEqual(const DataWithType &r, const DataWithType &l)
 {
@@ -33,7 +34,7 @@ bool DataComparator::isPlainDataEqual(const DataWithType &r, const DataWithType 
     case Datatype::STRING:
         return (*(static_cast<std::string *>(std::get<1>(r).get()))) == (*(static_cast<std::string *>(std::get<1>(l).get())));
     default:
-        std::cerr << "Cannot compare data, because types undefined" << std::endl;
+        Yellog::Error("Cannot compare data, because types undefined");
         return false;
     }
 

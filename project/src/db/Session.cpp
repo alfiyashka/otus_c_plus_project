@@ -93,9 +93,9 @@ bool Session::deleteExec(DeleteJob::whereData_t deleteData)
     return true;
 }
 
-BasicDBObject::dataList_t Session::select(SelectJob::whereData_t whereData)
+BasicDBObject::selectList_t Session::select(SelectJob::whereData_t whereData)
 {
-    BasicDBObject::dataList_t data;
+    BasicDBObject::selectList_t data;
     if (m_tran.has_value())
     {
         auto tr = m_tran.value();

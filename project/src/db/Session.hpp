@@ -61,7 +61,7 @@ public:
 
     bool deleteExec(DeleteJob::whereData_t deleteData);
 
-    BasicDBObject::dataList_t select(SelectJob::whereData_t whereData);
+    BasicDBObject::selectList_t select(SelectJob::whereData_t whereData);
 
     void commit();
 

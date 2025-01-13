@@ -13,7 +13,7 @@ set ( PROJECT_INCLUDE
    src/db/AuthInfo.hpp
    src/db/AuthManager.hpp
    src/db/DataComparator.hpp
-   
+   src/db/yelloger.h
    src/db/Job.hpp
    src/db/NoSQLDB.hpp
    src/db/Session.hpp

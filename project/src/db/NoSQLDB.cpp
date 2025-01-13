@@ -1,4 +1,5 @@
 #include "NoSQLDB.hpp"
+#include "yelloger.h"
 
 bool NoSqlDB::registerUser(const std::string &username, const std::string &pwd)
 {
@@ -21,8 +22,7 @@ bool NoSqlDB::beginTransaction(const NoSqlDB::SessionHandler &sessionHandle)
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot begin transaction. Auth error" << std::endl;
-        ;
+        Yellog::Error("Cannot begin transaction. Auth error");
         return false;
     }
     auto session = sessionRes.value();
@@ -36,22 +36,21 @@ bool NoSqlDB::execInsert(const NoSqlDB::SessionHandler &sessionHandle,
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot Insert data. Auth error" << std::endl;
-        ;
+        Yellog::Error("Cannot Insert data. Auth error");
         return false;
     }
     auto session = sessionRes.value();
     return session->insert(insertData);
 }
 
-BasicDBObject::dataList_t NoSqlDB::select(const NoSqlDB::SessionHandler &sessionHandle,
+BasicDBObject::selectList_t NoSqlDB::select(const NoSqlDB::SessionHandler &sessionHandle,
                                  SelectJob::whereData_t whereData)
 {
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot Select data. Auth error" << std::endl;
-        return BasicDBObject::dataList_t();
+        Yellog::Error("Cannot Select data. Auth error");
+        return BasicDBObject::selectList_t();
     }
     auto session = sessionRes.value();
     return session->select(whereData);
@@ -63,8 +62,7 @@ bool NoSqlDB::execUpdate(const NoSqlDB::SessionHandler &sessionHandle,
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot Update data. Auth error" << std::endl;
-        ;
+        Yellog::Error("Cannot Update data. Auth error");
         return false;
     }
     auto session = sessionRes.value();
@@ -77,7 +75,7 @@ bool NoSqlDB::execDelete(const NoSqlDB::SessionHandler &sessionHandle,
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot Update data. Auth error" << std::endl;
+        Yellog::Error("Cannot Update data. Auth error");
         return false;
     }
     auto session = sessionRes.value();
@@ -89,7 +87,7 @@ void NoSqlDB::commitTransaction(const NoSqlDB::SessionHandler &sessionHandle)
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot begin transaction. Auth error" << std::endl;
+        Yellog::Error("Cannot begin transaction. Auth error");
         return;
     }
 
@@ -102,11 +100,10 @@ void NoSqlDB::exit(const NoSqlDB::SessionHandler &sessionHandle)
     const auto sessionRes = m_sessionManager.getSession(sessionHandle.value());
     if (!sessionRes.has_value())
     {
-        std::cerr << "Cannot get close session. Session does not found(Auth error)" << std::endl;
-        ;
+        Yellog::Error("Cannot get close session. Session does not found(Auth error)");
         return;
     }
 
     m_sessionManager.closeSession(sessionHandle.value());
-    std::cout << "End session with id '" << sessionHandle.value() << "'." << std::endl;
+    Yellog::Info("End session with id '%d'", sessionHandle.value());
 }
