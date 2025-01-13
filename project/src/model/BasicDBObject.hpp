@@ -10,7 +10,9 @@
 #include "../db/IdGenerator.hpp"
 #include "BasicDBInputObject.hpp"
 
-
+/**
+ * Interface defines select result 
+ */
 class IBasicDBSelectObject
 {
 public:
@@ -32,10 +34,12 @@ public:
     
 };
 
+/**
+ * Stores data entry in db
+ */
 class BasicDBObject: public BasicDBInsertObject, public IBasicDBSelectObject
 {
 protected:
-    // metadata
     const std::size_t m_id;
 public:
     using pointer_t = std::shared_ptr<BasicDBObject>;
@@ -57,6 +61,8 @@ public:
       m_id(obj.id()) {
 
     }
+    virtual ~BasicDBObject() {}
+
     bool operator<(const BasicDBObject &obj) const
     {
       return id() < obj.id();

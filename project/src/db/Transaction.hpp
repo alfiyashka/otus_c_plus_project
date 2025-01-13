@@ -69,7 +69,7 @@ public:
     std::size_t xid() const { return m_xid; }
 
 private:  
-    bool m_isOpen;
+    std::atomic<bool> m_isOpen;
     std::size_t m_xid;
 
     DBStore& m_dataStore;

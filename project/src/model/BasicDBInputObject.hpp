@@ -11,6 +11,9 @@
 
 class ComplexDBObject;
 
+/**
+ * basic abstract class that contains common data
+ */
 class BasicDBAbstractObject
 {
 public:
@@ -75,11 +78,10 @@ public:
     const parent_t parent() const { return m_parent; }
     
 protected:
-    Data_t m_data;
-    // metadata
-    Datatype m_type;
-    std::string m_name;
-    parent_t m_parent;      
+    Data_t m_data; // stores any data
+    Datatype m_type; // defines datatype
+    std::string m_name; // defines entry name
+    parent_t m_parent;  // defines entry's parent
 };
 
 class IBasicDBWhereObject

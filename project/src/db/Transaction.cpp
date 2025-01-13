@@ -17,12 +17,7 @@ void Transaction::transactionWork()
 
         if (m_failed)
         { // failed in the middle of transaction
-            rollback();
             m_isOpen = false;
-            while (m_jobs.empty())
-            {
-                m_jobs.pop();
-            }
             break;
         }
 
@@ -39,6 +34,7 @@ void Transaction::transactionWork()
 
 void Transaction::begin()
 {
+    m_isOpen = true;
     Yellog::Info("Begin transaction with id '%d'", m_xid);
 }
 
@@ -134,7 +130,8 @@ BasicDBObject::selectList_t Transaction::select(SelectJob::whereData_t whereData
 
 void Transaction::rollback()
 {
-    m_tempDataStore.clear();
+    m_failed = true;
+    m_condVar.notify_one();
     Yellog::Info("Rollback data by xid '%d'", m_xid);
     if (m_thread.joinable())
     {
@@ -144,7 +141,6 @@ void Transaction::rollback()
 
 void Transaction::terminate()
 {
-    this->m_failed = true;
-    m_condVar.notify_one();
-    Yellog::Info("Terminate data by xid '%d'", m_xid);
+    Yellog::Info("Terminating data by xid '%d'", m_xid);
+    rollback();
 }
