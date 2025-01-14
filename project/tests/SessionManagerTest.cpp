@@ -9,7 +9,7 @@ TEST(session_manager_test_case, test_create_session)
     DBStore dbStore;
     SessionManager sessionManager(trManager, dbStore);
     
-    std::shared_ptr<IAuth> auth(new Auth("user", "pwd"));
+    IAuth::pointer_t auth(new Auth("user", "pwd"));
     const auto sessionHandler = sessionManager.createSession(auth);
 
     EXPECT_TRUE(sessionHandler > 0);
@@ -22,7 +22,7 @@ TEST(session_manager_test_case, test_remove_session)
     DBStore dbStore;
     SessionManager sessionManager(trManager, dbStore);
     
-    std::shared_ptr<IAuth> auth(new Auth("user", "pwd"));
+    IAuth::pointer_t auth(new Auth("user", "pwd"));
     const auto sessionHandler = sessionManager.createSession(auth);
 
     sessionManager.closeSession(sessionHandler);
@@ -38,7 +38,7 @@ TEST(session_manager_test_case, test_create_session_threads)
     
     auto sessionCreaterWork = [&sessionManager] () 
     {
-        std::shared_ptr<IAuth> auth(new Auth("user", "pwd"));
+        IAuth::pointer_t auth(new Auth("user", "pwd"));
         sessionManager.createSession(auth);
     };
 

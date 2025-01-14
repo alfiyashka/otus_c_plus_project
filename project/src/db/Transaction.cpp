@@ -26,6 +26,7 @@ void Transaction::transactionWork()
         if (job->type() == JOB_TYPE::COMMIT)
         {
             m_isOpen = false;
+            break;
         }
         m_lastProcessedSequence = job->sequence();
         m_jobs.pop();

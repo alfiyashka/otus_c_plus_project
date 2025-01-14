@@ -2,10 +2,12 @@
 #define _AUTH_INFO_HPP_
 
 #include <string>
+#include <memory>
 
 class IAuth
 {
 public:
+  using pointer_t = std::shared_ptr<IAuth>;
   virtual const std::string& username() const = 0;
   virtual ~IAuth() {}
 };

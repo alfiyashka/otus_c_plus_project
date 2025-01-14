@@ -31,6 +31,7 @@ void Session::terminate()
     if (m_tran.has_value())
     {
         m_tran.value()->terminate();
+        rollback();
     }
     m_tran.reset();
 }
@@ -53,8 +54,14 @@ bool Session::insert(InsertJob::insertData_t insertData)
     {
         createTransaction(); // like auto commit
         auto tr = m_tran.value();
-        tr->insert(insertData);
-        tr->commit();
+        if (tr->insert(insertData))
+        {
+            commit();
+        }
+        else 
+        {
+            rollback();
+        }
     }
     return true;
 }
@@ -70,8 +77,14 @@ bool Session::update(UpdateJob::updateData_t updateData)
     {
         createTransaction(); // like auto commit
         auto tr = m_tran.value();
-        tr->update(updateData);
-        tr->commit();
+        if (tr->update(updateData))
+        {
+            commit();
+        }
+        else 
+        {
+            rollback();
+        }
     }
     return true;
 }
@@ -87,8 +100,15 @@ bool Session::deleteExec(DeleteJob::whereData_t deleteData)
     {
         createTransaction(); // like auto commit
         auto tr = m_tran.value();
-        tr->deleteExec(deleteData);
-        tr->commit();
+        if (tr->deleteExec(deleteData))
+        {
+            commit();
+        }
+        else 
+        {
+            rollback();
+        }
+        
     }
     return true;
 }
@@ -106,7 +126,7 @@ BasicDBObject::selectList_t Session::select(SelectJob::whereData_t whereData)
         createTransaction(); // like auto commit
         auto tr = m_tran.value();
         data = tr->select(whereData);
-        tr->commit();
+        commit();
     }
     return data;
 }

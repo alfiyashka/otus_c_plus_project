@@ -1,7 +1,7 @@
 #include "SessionManager.hpp"
 #include "yelloger.h"
 
-int SessionManager::createSession(std::shared_ptr<IAuth> auth)
+int SessionManager::createSession(IAuth::pointer_t auth)
 {
     const auto newId = generateId();
     m_sessions.insert(

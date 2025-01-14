@@ -27,7 +27,7 @@ public:
 
     }
 
-    int createSession(std::shared_ptr<IAuth> auth);
+    int createSession(IAuth::pointer_t auth);
 
     void closeSession(const std::size_t sessionId);
 

@@ -31,7 +31,7 @@ public:
      * @param pwd - password
      * @returns user's login info
      */
-    std::optional<std::shared_ptr<IAuth>> login(const std::string& username, const std::string& pwd) const;
+    std::optional<IAuth::pointer_t> login(const std::string& username, const std::string& pwd) const;
 
     /**
      * removes by username login data

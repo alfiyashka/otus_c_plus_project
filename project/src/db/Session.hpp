@@ -19,7 +19,7 @@
 
 class Session 
 {
-    const std::shared_ptr<IAuth> m_auth;
+    const IAuth::pointer_t m_auth;
     const std::size_t m_id;
     std::optional<Transaction::pointer_t> m_tran;
     bool m_terminate;
@@ -30,7 +30,7 @@ class Session
     
 public:
     Session(const std::size_t id,
-        std::shared_ptr<IAuth> auth,
+        IAuth::pointer_t auth,
         TransactionManager& transactionManager,
         DBStore& dataStore)
     : m_id(id),
